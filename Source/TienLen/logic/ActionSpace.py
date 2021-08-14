@@ -1,10 +1,9 @@
 import numpy as np
-from numpy.random import set_state
 from utils.Util import Util
 class ActionSpace:
     actions = []
     def __init__(self):
-        self.actions = self.loadActionSpace()
+        self.loadActionSpace()
 
     def loadActionSpace(self):
         fileName = "Dump/arrayBinary13.npz"

@@ -164,5 +164,4 @@ def createInput(listPlayer, indexCurrentPlayer, cardPrevHand, disCardThreeSpider
     result += d
     result += e
     result = np.array(result)
-    print(len(result))
     return result

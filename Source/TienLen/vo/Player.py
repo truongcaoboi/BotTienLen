@@ -12,7 +12,7 @@ class Player:
     def __init__(self, index, idCards = [], currentPlayed = []):
         self.index = index
         self.idCards = np.array(idCards)
-        self.currentPlayed = np.array(currentPlayed)
+        self.currentPlayed = currentPlayed
         self.isInRound = True
         pass
     

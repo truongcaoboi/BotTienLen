@@ -1,3 +1,5 @@
+from operator import le
+from numpy.core.defchararray import array, count
 from numpy.lib.function_base import select
 from logic.ActionSpace import ActionSpace
 from vo.Card import Card
@@ -10,8 +12,10 @@ import numpy as np
 import random, time
 import math
 from multiprocessing import Process, Pipe
+from gym import spaces, Env
 
-class TienLenGame:
+class TienLenGame(Env):
+    num_envs = 4
     actions = []
     indexCurrentPlayer = 0
     indexStartRound = 0
@@ -21,6 +25,7 @@ class TienLenGame:
     gameOver = False
     round = 0
     numGame = 0
+    countActionFail = 0
     desk = []
     numPlayerFold = 0
     isGetIndex = False
@@ -33,16 +38,27 @@ class TienLenGame:
     rewardStep = 0
     historyNotDiscard = []
     historyNotDisCardInRound = []
+    notMatchCard = False
+
 
     def __init__(self,):
-        self.actions = ActionSpace().actions
-        self.resetGame()
-    def convertAvailableActions(availAcs):
+        actionObject = ActionSpace()
+        self.actions = actionObject.actions
+        self.low = np.zeros(746)
+        self.high = np.ones(746)
+        size_action_spaces = len(self.actions)
+        self.action_space = spaces.Discrete(size_action_spaces)
+        self.observation_space = spaces.Box(
+            self.low, self.high, dtype= np.int
+        )
+        self.reset()
+    def convertAvailableActions(self,availAcs):
         #convert from (1,0,0,1,1...) to (0, -math.inf, -math.inf, 0,0...) etc
-        availAcs[np.nonzero(availAcs==0)] = -math.inf
-        availAcs[np.nonzero(availAcs==1)] = 0
+        availAcs[np.nonzero(availAcs==0)] = 1/len(self.actions)
+        availAcs[np.nonzero(availAcs==1)] = math.inf
         return availAcs
-    def resetGame(self):
+    def reset(self):
+        print("reset game")
         self.isMustPlayThreeSpider = False
         self.historyNotDiscard = []
         self.desk = np.random.permutation(52) + 1
@@ -59,7 +75,7 @@ class TienLenGame:
 
         if(self.checkFastWin()):
             self.lastWinner = -1
-            self.resetGame()
+            self.reset()
 
         self.indexCurrentPlayer = self.lastWinner
         for i in range(4):
@@ -71,11 +87,13 @@ class TienLenGame:
                         break
         self.round = 0
         self.numGame += 1
+        self.countActionFail = 0
         self.gameOver = False
         self.isGetIndex = True
         self.resetRound()
 
         self.updateInputNetwork()
+        return np.array(self.inputNetwork[self.indexCurrentPlayer])
 
     # điều kiện win nhanh: tứ 2, sảnh rồng, 6 đôi, 4 xám, 5 đôi thông, nếu là ván khởi động có bộ chứa 3 bích chặn 2
     def checkFastWin(self):
@@ -85,6 +103,7 @@ class TienLenGame:
         return False
 
     def resetRound(self):
+        print("reset round")
         self.indexStartRound = self.indexCurrentPlayer
         self.round += 1
         for player in self.listPlayer:
@@ -94,12 +113,8 @@ class TienLenGame:
         if(len(self.historyNotDisCardInRound) > 0):
             self.historyNotDiscard = self.historyNotDisCardInRound + self.historyNotDiscard
         self.historyNotDisCardInRound = []
+        self.lastGroup = []
 
-    def getAction(self):
-        if(self.indexStartRound == self.indexCurrentPlayer):
-            return 1
-        else:
-            return random.randint(0,2)
     
     def getIndexNext(self):
         if(self.isGetIndex):
@@ -117,27 +132,72 @@ class TienLenGame:
                 break
         if(self.numPlayerFold == 3):
             self.resetRound()
+        self.action_space = np.array(self.convertAvailableActions(self.getActionUseful()), np.int)
 
     def updateGame(self, action):
+        print(self.actions[action])
+        self.notMatchCard = False
+        typePrevHand = self.func.getTypeArrCard(self.lastGroup)
+        typeCurrHand = self.func.TYPE_NONE
         player = self.listPlayer[self.indexCurrentPlayer]
         arrCard = self.func.convertActionToArrCard(self.actions[action], player.idCards)
-        playerCards = np.ndarray.tolist(player.idCards)
-        for iCard in arrCard:
-            playerCards.remove(iCard)
-        player.idCards = np.array(playerCards)
-        playerDiscard = np.ndarray.tolist(player.currentPlayed)
-        playerDiscard.append(arrCard)
-        player.currentPlayed = np.array(playerDiscard)
-        if(len(arrCard) == 0 and player.numberActionAvailable > 1):
-            self.historyNotDisCardInRound.append(player.index)
+        if(arrCard is not None):
+            flag = False
+            if(len(self.lastGroup) == 0):
+                flag = self.func.acceptDiscards(arrCard, self.isMustPlayThreeSpider)
+            else:
+                flag = self.func.compareTwoArrayCard(self.lastGroup, arrCard)
+            if(flag):
+                typeCurrHand = self.func.getTypeArrCard(arrCard)
+                if(len(arrCard) > 0):
+                    playerCards = np.ndarray.tolist(player.idCards)
+                    for iCard in arrCard:
+                        playerCards.remove(iCard)
+                    player.idCards = np.array(playerCards, dtype= np.int)
+                    playerDiscard = player.currentPlayed.copy()
+                    playerDiscard.append(np.array(arrCard, dtype= np.int))
+                    player.currentPlayed = playerDiscard
+                    if(len(player.idCards) == 0):
+                        self.gameOver = True
+                    self.lastGroup = arrCard
+                else:
+                    if(len(arrCard) == 0 and player.numberActionAvailable > 1):
+                        self.historyNotDisCardInRound.append(player.index)
+                    self.executeNotDiscard(player)
+            else:
+                self.notMatchCard = True
+        else:
+            self.notMatchCard = True
+        self.calReward(typePrevHand=typePrevHand, typeActionHand= typeCurrHand)
+        strCard = "empty"
+        if(arrCard is not None):
+            strCard = ""
+            for id in arrCard:
+                strCard += self.func.printCard(id) + ", "
+        if(self.notMatchCard):
+            print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
+            self.countActionFail += 1
+            self.notMatchCard = False
+            # input()
+            return
+        print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
+        # input()
         self.isGetIndex = False
         self.isMustPlayThreeSpider = False
         self.getIndexNext()
         self.updateInputNetwork()
+    
+    def executeNotDiscard(self, player):
+        player.isInRound = False
+        self.numPlayerFold += 1
+        pass
 
     def calReward(self, typePrevHand, typeActionHand):
+        if(self.notMatchCard):
+            self.rewardStep = -100000
+            return
         self.rewards = np.zeros((len(self.listPlayer)))
-        self.rewardStep = self.rewardStep(typePrevHand, typeActionHand)
+        self.rewardStep = self.calRewardStep(typePrevHand, typeActionHand)
         winnerMark = 0
         if(self.gameOver):
             for index in range(len(self.listPlayer)):
@@ -208,11 +268,12 @@ class TienLenGame:
         return -1
 
     def step(self, action):
+        cPlayer = self.indexCurrentPlayer
         self.updateGame(action)
         if self.gameOver == False:
             reward = self.rewardStep
             done = False
-            info = None
+            info = {}
         else:
             reward = self.rewards
             done = True
@@ -220,8 +281,8 @@ class TienLenGame:
             info['numTurns'] = self.round
             info['rewards'] = self.rewards
             #what else is worth monitoring?            
-            self.resetGame()
-        return reward, done, info
+            self.reset()
+        return np.array(self.inputNetwork[self.indexCurrentPlayer]), reward, done, info
 
 
     def updateInputNetwork(self):
@@ -236,7 +297,7 @@ class TienLenGame:
         countAction = 0
         cards = self.func.sortCard(self.listPlayer[self.indexCurrentPlayer].idCards)
         actionavailable = np.zeros((len(self.actions)))
-        if(self.indexCurrentPlayer == self.indexStartRound):
+        if(len(self.lastGroup) == 0):
             for i in range(len(self.actions)):
                 arrCard = self.func.convertActionToArrCard(self.actions[i], cards)
                 if arrCard is not None:
@@ -251,10 +312,11 @@ class TienLenGame:
                         actionavailable[i] = 1
                         countAction += 1
         self.listPlayer[self.indexCurrentPlayer].numberActionAvailable = countAction
-        return actionavailable
+        return np.array(actionavailable, np.float)
 
     def getCurrentState(self):
-        return self.indexCurrentPlayer, self.inputNetwork[self.indexCurrentPlayer].reshape(1, self.countBitInput), self.convertAvailableActions(self.getActionUseful()).reshape(1, len(self.actions))
+        actionAva = self.convertAvailableActions(self.getActionUseful())
+        return self.indexCurrentPlayer, self.inputNetwork[self.indexCurrentPlayer], actionAva
     
 #now create a vectorized environment
 def worker(remote, parent_remote):
@@ -266,7 +328,7 @@ def worker(remote, parent_remote):
             reward, done, info = game.step(data)
             remote.send((reward, done, info))
         elif cmd == 'reset':
-            game.resetGame()
+            game.reset()
             pGo, cState, availAcs = game.getCurrentState()
             remote.send((pGo,cState))
         elif cmd == 'getCurrState':

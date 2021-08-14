@@ -4,6 +4,7 @@ import numpy as np
 from baselines.a2c.utils import fc
 import logic.Constants as cons
 import joblib
+from torch import nn
 
 class PPONetwork(object):
     

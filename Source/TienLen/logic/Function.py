@@ -41,7 +41,10 @@ class Function:
         arrCardBin = self.convertCardOnHandToBinary13(arrCardOnHand)
         checkArrAction = int(self.util.convert_array_toString(arrayAction), base= 2)
         checkCardOnHand = int(self.util.convert_array_toString(arrCardBin), base= 2)
-        return checkArrAction == checkArrAction and checkCardOnHand
+        # print(arrayAction)
+        # print(arrCardBin)
+        # print("===================")
+        return checkArrAction == checkArrAction & checkCardOnHand
     
     # input: cardId
     # output: number of card
@@ -280,12 +283,18 @@ class Function:
     # input: arrAction: array binary size 13, arrCard: cardIds
     # output: if arrayAction isn't suittable with arrCard return None, otherwise return cardIds
     def convertActionToArrCard(self, arrayAction, arrCard):
+        if(len(arrayAction) == 0):
+            print("Nguoi choi khong chon bai")
         if(self.checkSuitableCardOnHand(arrayAction, arrCard)):
             arrCardAction = []
             arrIdCardSort = self.sortCard(arrCard)
             for index in range(len(arrayAction)):
                 if(arrayAction[index] == 1):
                     arrCardAction.append(arrIdCardSort[index])
+            strCard = ""
+            for idCard in arrCardAction:
+                strCard += self.printCard(idCard)+", "
+            # print(strCard)
             return np.array(arrCardAction, dtype= np.int_)
         else:
             return None
@@ -493,7 +502,7 @@ class Function:
     # describe: if cards is one of type group return true otherwise return false        
     def acceptDiscards(self, arrCard, isPlayThreeSpider):
         typeGroup = self.getTypeArrCard(arrCard)
-        if(typeGroup != self.TYPE_NONE):
+        if(typeGroup != self.TYPE_NONE and typeGroup != self.TYPE_EMPTY):
             if isPlayThreeSpider:
                 cardIdThreeSpider = 2
                 for cardI in arrCard:

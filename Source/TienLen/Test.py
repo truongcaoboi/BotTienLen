@@ -9,6 +9,8 @@ from logic.ActionSpace import ActionSpace
 import logic.FunctionCheckCard as fcc
 import logic.FunctionCreaateInput as fci
 
+env = TienLenGame()
+
 actionSpaceObject = ActionSpace()
 actionSpaceObject.loadActionSpace()
 
@@ -141,6 +143,6 @@ def testCompareFunction():
             print(arrCard)
             count += 1
     print(count)
-# testCheckFastWin()
 
-print(len(actionSpaceObject.actions))
+action_ex = 0
+env.step(action_ex)
