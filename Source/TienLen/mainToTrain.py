@@ -4,13 +4,13 @@ from logic.TienLenGame import TienLenGame
 
 env = TienLenGame()
 
-N = 5
+N = 2
 batch_size = 10
 n_epochs = 4
-alpha = 0.0003
+alpha = 0.00025
 agent = Agent(n_actions=env.action_space.n, batch_size= batch_size, alpha= alpha, n_epochs= n_epochs, input_dims= env.observation_space.shape)
 agent.load_models()
-n_games = 300
+n_games = 1
 learn_iters= 0
 for i in range(n_games):
     env.reset()

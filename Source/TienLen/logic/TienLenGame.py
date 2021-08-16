@@ -54,8 +54,8 @@ class TienLenGame(Env):
         self.reset()
     def convertAvailableActions(self,availAcs):
         #convert from (1,0,0,1,1...) to (0, -math.inf, -math.inf, 0,0...) etc
-        availAcs[np.nonzero(availAcs==0)] = 1/len(self.actions)
-        availAcs[np.nonzero(availAcs==1)] = math.inf
+        availAcs[np.nonzero(availAcs==0)] = 0.000001
+        availAcs[np.nonzero(availAcs==1)] = 1
         return availAcs
     def reset(self):
         print("reset game")

@@ -1,3 +1,4 @@
+import math
 import os
 from sys import path
 import numpy as np
@@ -191,34 +192,40 @@ class Agent:
 
             advantage = T.tensor(advantage).to(self.actor.device)
             values = T.tensor(values).to(self.actor.device)
-            print(batches)
-            for batch in batches:
-                print(state_arr[batch])
-                states = T.tensor(state_arr[batch], dtype= T.float32).to(self.actor.device)
-                old_probs = T.tensor(old_probs_arr[batch], dtype=T.float32).to(self.actor.device)
-                actions = T.tensor(action_arr[batch], dtype=T.float32).to(self.actor.device)
-                action_ava = action_ava_arr[batch]
-                
-                dist = self.actor(states, action_ava, False)
-                critic_value = self.critic(states)
-                critic_value = T.squeeze(critic_value)
+            for batchx in batches:
+                for batch in batchx:
+                    states = T.tensor(state_arr[batch], dtype= T.float32).to(self.actor.device)
+                    old_probs = T.tensor(old_probs_arr[batch], dtype=T.float32).to(self.actor.device)
+                    actions = T.tensor(action_arr[batch], dtype=T.float32).to(self.actor.device)
+                    action_ava = action_ava_arr[batch]
+                    print("in batch {}".format(batch))
+                    
+                    dist = self.actor(states, action_ava, False)
+                    critic_value = self.critic(states)
+                    critic_value = T.squeeze(critic_value)
 
-                dist_entropy = dist.entropy()
-                new_probs = dist.log_prob(actions)
-                prob_ratio = new_probs.exp() / old_probs.exp()
-
-                weighted_probs = advantage[batch] * prob_ratio
-                weighted_clipped_probs = T.clamp(prob_ratio, 1 - self.policy_clip, 1 + self.policy_clip) * advantage[batch]
-                actor_loss = -T.min(weighted_probs, weighted_clipped_probs).mean()
-                returns = advantage[batch] + values[batch]
-                critic_loss = (returns - critic_value) ** 2
-                critic_loss = critic_loss.mean()
-                total_loss = actor_loss + 0.5 * critic_loss - 0.01 * dist_entropy
-                self.actor.optimizer.zero_grad()
-                self.critic.optimizer.zero_grad()
-                total_loss.mean().backward()
-                self.actor.optimizer.step()
-                self.critic.optimizer.step()
+                    dist_entropy = dist.entropy()
+                    new_probs = dist.log_prob(actions)
+                    prob_ratio = T.exp(new_probs.detach() - old_probs.detach())
+                    weighted_probs = advantage[batch] * prob_ratio
+                    weighted_probs = weighted_probs
+                    weighted_clipped_probs = T.clamp(prob_ratio, 1 - self.policy_clip, 1 + self.policy_clip) * advantage[batch]
+                    weighted_clipped_probs = weighted_clipped_probs
+                    print("{} {} {} {} {} {} {}".format(dist_entropy,old_probs, new_probs, prob_ratio, weighted_probs, weighted_clipped_probs, advantage[batch]))
+                    actor_loss = -T.min(weighted_probs, weighted_clipped_probs).mean()
+                    returns = advantage[batch] + values[batch]
+                    returns = returns
+                    critic_loss = (returns - critic_value) ** 2
+                    critic_loss = critic_loss.mean()
+                    total_loss = actor_loss + 0.5 * critic_loss - 0.01 * dist_entropy
+                    print("total_loss: {}".format(total_loss))
+                    self.actor.optimizer.zero_grad()
+                    self.critic.optimizer.zero_grad()
+                    total_loss.mean().backward()
+                    T.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=0.5, error_if_nonfinite=False)
+                    T.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5, error_if_nonfinite=False)
+                    self.actor.optimizer.step()
+                    self.critic.optimizer.step()
 
         self.memory.clear_memory()
         print("===========end learning===========")
