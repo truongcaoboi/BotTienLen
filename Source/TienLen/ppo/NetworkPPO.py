@@ -1,20 +1,17 @@
 import math
 import os
-from sys import path
 import numpy as np
-from numpy.core.defchararray import array
-from numpy.core.numeric import indices
-from numpy.lib.twodim_base import diag
+from numpy.lib.function_base import select
 import torch as T
 import torch.nn as nn
 from torch.nn.modules.activation import ReLU
 import torch.optim as optim
 from torch.distributions.categorical import Categorical
-from torch.random import set_rng_state
 from torch.distributions import MultivariateNormal
 
 class PPOMemory:
     def __init__(self, batch_size):
+        self.end_game = False
         self.states = []
         self.probs = []
         self.vals = []
@@ -40,23 +37,66 @@ class PPOMemory:
                np.array(self.actionsAvailables),\
                batches
 
-    def store_memory(self, state, action, probs, vals, reward, done, actionAvailable):
+    def store_memory(self, state, action, probs, vals, reward, done, actionAvailable,index):
         self.states.append(state)
         self.actions.append(action)
         self.probs.append(probs)
         self.vals.append(vals)
-        self.rewards.append(reward)
-        self.dones.append(done)
+        if(done):
+            self.rewards.append([index, 0])
+            self.dones.append(done)
+            self.end_game = True
+            last_index_player = [-1,-1,-1,-1]
+            for i in range(len(self.rewards)):
+                last_index_player[self.rewards[i][0]] = i
+            for i in range(len(last_index_player)):
+                if(last_index_player[i] != -1):
+                    self.dones[last_index_player[i]] = True
+                    self.rewards[last_index_player[i]][1] += reward[i]
+        else:
+            self.rewards.append([index, reward])
+            self.dones.append(done)
         self.actionsAvailables.append(actionAvailable)
 
     def clear_memory(self):
-        self.states = []
-        self.actions = []
-        self.probs = []
-        self.vals = []
-        self.rewards = []
-        self.dones = []
-        self.actionsAvailables = []
+        if(self.end_game):
+            self.states = []
+            self.actions = []
+            self.probs = []
+            self.vals = []
+            self.rewards = []
+            self.dones = []
+            self.actionsAvailables = []
+            self.end_game = False
+        else:
+            states = []
+            actions = []
+            probs = []
+            vals = []
+            rewards = []
+            dones = []
+            actionsAvailables = []
+            last_index_player = [-1,-1,-1,-1]
+            for i in range(len(self.rewards)):
+                last_index_player[self.rewards[i][0]] = i
+            for i in last_index_player:
+                if i != -1:
+                    states.append(self.states[i])
+                    actions.append(self.actions[i])
+                    probs.append(self.probs[i])
+                    vals.append(self.vals[i])
+                    rewards.append(self.rewards[i])
+                    dones.append(self.dones[i])
+                    actionsAvailables.append(self.actionsAvailables[i])
+            self.states = states
+            self.actions = actions
+            self.probs = probs
+            self.vals = vals
+            self.rewards = rewards
+            self.dones = dones
+            self.actionsAvailables = actionsAvailables
+            
+
 
 class ActionNetwork(nn.Module):
     def __init__(self, n_actions, input_dims, alpha, fc1_dims = 512, fc2_dims = 256, chkpt_dir = "tmp/ppo"):
@@ -146,8 +186,8 @@ class Agent:
         self.memory = PPOMemory(batch_size)
         # print(self.policy_clip)
         
-    def remember(self, state, action, probs, vals, reward, done, actionAva):
-        self.memory.store_memory(state, action,probs,vals,reward,done, actionAva)
+    def remember(self, state, action, probs, vals, reward, done, actionAva, index):
+        self.memory.store_memory(state, action,probs,vals,reward,done, actionAva, index)
 
     def save_models(self):
         print("=========== save models ============")
@@ -181,16 +221,31 @@ class Agent:
             values = vals_arr
             advantage = np.zeros(len(reward_arr), dtype= np.float)
 
-            for t in range(len(reward_arr) - 1):
+            endT = len(reward_arr)
+
+            for t in range(endT):
+                index_player = reward_arr[t][0]
                 discount = 1
                 a_t = 0
-                for k in range(t, len(reward_arr) - 1):
-                    a_t += discount * (reward_arr[k] + self.gamma * values[k + 1]*\
-                        (1 - int(done_arr[k])) - values[k]) 
-                    discount *= self.gae_lambda * self.gamma
+                for k in range(t, endT):
+                    if(reward_arr[k][0] == index_player):
+                        next_k = -1
+                        for nk in range(k+1, endT):
+                            if(reward_arr[nk][0] == index_player):
+                                next_k = nk
+                                break
+                        if(next_k != -1):
+                            a_t += discount * (reward_arr[k][1] + self.gamma * values[next_k]*\
+                                (1 - int(done_arr[k])) - values[k]) 
+                            discount *= self.gae_lambda * self.gamma
+                        else:
+                            if(done_arr[k]):
+                                a_t += discount * (reward_arr[k][1] - values[k]) 
+                                discount *= self.gae_lambda * self.gamma
                 advantage[t] = a_t
 
             advantage = T.tensor(advantage).to(self.actor.device)
+            print(advantage)
             values = T.tensor(values).to(self.actor.device)
             for batchx in batches:
                 for batch in batchx:

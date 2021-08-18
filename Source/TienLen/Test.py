@@ -8,6 +8,7 @@ from logic.Function import Function
 from logic.ActionSpace import ActionSpace
 import logic.FunctionCheckCard as fcc
 import logic.FunctionCreaateInput as fci
+import json
 
 env = TienLenGame()
 
@@ -15,6 +16,7 @@ actionSpaceObject = ActionSpace()
 actionSpaceObject.loadActionSpace()
 
 functionObject = Function()
+util = Util()
 
 # deck = np.random.permutation(52) + 1
 
@@ -144,5 +146,5 @@ def testCompareFunction():
             count += 1
     print(count)
 
-action_ex = 0
-env.step(action_ex)
+
+print(int(True))

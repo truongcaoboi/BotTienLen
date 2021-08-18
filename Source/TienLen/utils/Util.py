@@ -1,5 +1,8 @@
 import numpy as np
 from numpy.core.records import array
+import os
+
+from numpy.lib.twodim_base import diag
 class Util:
 
     def __init__(self):
@@ -101,3 +104,11 @@ class Util:
                     totalTemp = 0
         return (countMax, totalEmpty)
 
+    def printStrIntoFile(self, strContent, fileName):
+        dir = "Dump"
+        fileName = os.path.join(dir, fileName)
+        file = open(fileName, "a+")
+        file.write(strContent)
+        file.write("\n")
+        file.flush()
+        file.close()

@@ -1,0 +1,1 @@
+{"total_score": -1314.0, "mark_player": [-542.0, -251.0, -293.0, -234.0], "count_action_fail": 29, "count_has_card_not_discard": 11}

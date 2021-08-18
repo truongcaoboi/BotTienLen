@@ -26,6 +26,7 @@ class TienLenGame(Env):
     round = 0
     numGame = 0
     countActionFail = 0
+    countHasCardNotDiscard = 0
     desk = []
     numPlayerFold = 0
     isGetIndex = False
@@ -51,7 +52,7 @@ class TienLenGame(Env):
         self.observation_space = spaces.Box(
             self.low, self.high, dtype= np.int
         )
-        self.reset()
+        # self.reset()
     def convertAvailableActions(self,availAcs):
         #convert from (1,0,0,1,1...) to (0, -math.inf, -math.inf, 0,0...) etc
         availAcs[np.nonzero(availAcs==0)] = 0.000001
@@ -75,7 +76,7 @@ class TienLenGame(Env):
 
         if(self.checkFastWin()):
             self.lastWinner = -1
-            self.reset()
+            return self.reset()
 
         self.indexCurrentPlayer = self.lastWinner
         for i in range(4):
@@ -88,6 +89,7 @@ class TienLenGame(Env):
         self.round = 0
         self.numGame += 1
         self.countActionFail = 0
+        self.countHasCardNotDiscard = 0
         self.gameOver = False
         self.isGetIndex = True
         self.resetRound()
@@ -163,6 +165,7 @@ class TienLenGame(Env):
                 else:
                     if(len(arrCard) == 0 and player.numberActionAvailable > 1):
                         self.historyNotDisCardInRound.append(player.index)
+                        self.countHasCardNotDiscard += 1
                     self.executeNotDiscard(player)
             else:
                 self.notMatchCard = True
@@ -194,7 +197,7 @@ class TienLenGame(Env):
 
     def calReward(self, typePrevHand, typeActionHand):
         if(self.notMatchCard):
-            self.rewardStep = -100000
+            self.rewardStep = -50
             return
         self.rewards = np.zeros((len(self.listPlayer)))
         self.rewardStep = self.calRewardStep(typePrevHand, typeActionHand)
@@ -281,7 +284,7 @@ class TienLenGame(Env):
             info['numTurns'] = self.round
             info['rewards'] = self.rewards
             #what else is worth monitoring?            
-            self.reset()
+            # self.reset()
         return np.array(self.inputNetwork[self.indexCurrentPlayer]), reward, done, info
 
 
