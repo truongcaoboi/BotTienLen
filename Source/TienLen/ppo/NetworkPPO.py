@@ -115,6 +115,8 @@ class ActionNetwork(nn.Module):
         self.action_dims = n_actions
         self.optimizer = optim.Adam(self.parameters(), lr= alpha)
         self.device = T.device('cpu')
+        if T.cuda.is_available():
+            self.device = T.device('cuda:0') 
         self.to(self.device)
 
     def set_action_var(self, action_new):
@@ -156,7 +158,9 @@ class CriticNetwork(nn.Module):
         )
         self.action_dims = n_actions
         self.optimizer = optim.Adam(self.parameters(), lr= alpha)
-        self.device = T.device("cpu")
+        self.device = T.device('cpu')
+        if T.cuda.is_available():
+            self.device = T.device('cuda:0')
         self.to(self.device)
 
     def set_action_var(self, action_new):
