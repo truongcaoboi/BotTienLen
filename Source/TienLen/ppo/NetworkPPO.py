@@ -1,7 +1,6 @@
 import math
 import os
 import numpy as np
-from numpy.lib.function_base import select
 import torch as T
 import torch.nn as nn
 from torch.nn.modules.activation import ReLU
@@ -27,14 +26,13 @@ class PPOMemory:
         indices = np.arange(n_states, dtype= np.int)
         np.random.shuffle(indices)
         batches = [indices[i:i+self.batch_size] for i in batch_start]
-
-        return np.array(self.states),\
-               np.array(self.actions),\
-               np.array(self.probs),\
-               np.array(self.vals),\
-               np.array(self.rewards),\
-               np.array(self.dones),\
-               np.array(self.actionsAvailables),\
+        return self.states,\
+               self.actions,\
+               self.probs,\
+               self.vals,\
+               self.rewards,\
+               self.dones,\
+               self.actionsAvailables,\
                batches
 
     def store_memory(self, state, action, probs, vals, reward, done, actionAvailable,index):
@@ -178,7 +176,7 @@ class CriticNetwork(nn.Module):
 
 class Agent:
     def __init__(self,input_dims, n_actions, gamma = 0.99, alpha = 0.0003, gae_lambda = 0.95,
-                 policy_clip = 0.1, batch_size = 64, N = 2024, n_epochs = 10):
+                 policy_clip = 0.1, batch_size = 64, N = 2024, n_epochs = 10, memory=None):
         self.gamma = gamma
         self.alpha = alpha
         self.gae_lambda = gae_lambda
@@ -187,9 +185,14 @@ class Agent:
 
         self.actor = ActionNetwork(n_actions= n_actions, input_dims= input_dims, alpha = alpha)
         self.critic = CriticNetwork(input_dims=input_dims, n_actions=n_actions, alpha= alpha)
-        self.memory = PPOMemory(batch_size)
+        # self.memory = PPOMemory(batch_size)
+        self.memory = memory
+        self.batch_size = batch_size
         # print(self.policy_clip)
-        
+
+    def set_memory(self, memory_new):
+        self.memory = memory_new
+
     def remember(self, state, action, probs, vals, reward, done, actionAva, index):
         self.memory.store_memory(state, action,probs,vals,reward,done, actionAva, index)
 
@@ -214,12 +217,26 @@ class Agent:
         probs = T.squeeze(dist.log_prob(action)).item()
         value = T.squeeze(value).item()
 
-        return action, probs, value
+        action_np = action.detach().cpu().numpy().flatten()
+        array_value_use = []
+        for index_a in range(len(actionAva)):
+            if(actionAva[index_a] == 1):
+                array_value_use.append(index_a)
+        value_max = action_np[array_value_use[0]]
+        index_max = array_value_use[0]
+        for i in range(len(array_value_use)):
+            index_a = array_value_use[i]
+            if(action_np[index_a] > value_max):
+                value_max = action_np[index_a]
+                index_max = index_a
+        action_ex = index_max
+
+        return action_ex, action, probs, value
 
     def learn(self):
         print("=============learning================")
         for _ in range(self.n_epochs):
-            print("lan thu {}".format(_))
+            # print("lan thu {}".format(_))
             state_arr, action_arr, old_probs_arr, vals_arr,\
                 reward_arr, done_arr, action_ava_arr, batches = self.memory.generate_batches()
             values = vals_arr
@@ -249,15 +266,15 @@ class Agent:
                 advantage[t] = a_t
 
             advantage = T.tensor(advantage).to(self.actor.device)
-            print(advantage)
+            # print(advantage)
             values = T.tensor(values).to(self.actor.device)
             for batchx in batches:
                 for batch in batchx:
                     states = T.tensor(state_arr[batch], dtype= T.float32).to(self.actor.device)
                     old_probs = T.tensor(old_probs_arr[batch], dtype=T.float32).to(self.actor.device)
-                    actions = T.tensor(action_arr[batch], dtype=T.float32).to(self.actor.device)
+                    actions = action_arr[batch]
                     action_ava = action_ava_arr[batch]
-                    print("in batch {}".format(batch))
+                    # print("in batch {}".format(batch))
                     
                     dist = self.actor(states, action_ava, False)
                     critic_value = self.critic(states)
@@ -270,7 +287,7 @@ class Agent:
                     weighted_probs = weighted_probs
                     weighted_clipped_probs = T.clamp(prob_ratio, 1 - self.policy_clip, 1 + self.policy_clip) * advantage[batch]
                     weighted_clipped_probs = weighted_clipped_probs
-                    print("{} {} {} {} {} {} {}".format(dist_entropy,old_probs, new_probs, prob_ratio, weighted_probs, weighted_clipped_probs, advantage[batch]))
+                    # print("{} {} {} {} {} {} {}".format(dist_entropy,old_probs, new_probs, prob_ratio, weighted_probs, weighted_clipped_probs, advantage[batch]))
                     actor_loss = -T.min(weighted_probs, weighted_clipped_probs).mean()
                     returns = advantage[batch] + values[batch]
                     returns = returns

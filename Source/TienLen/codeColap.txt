@@ -1,0 +1,16 @@
+from google.colab import drive
+drive.mount('/content/drive', force_remount=True)
+
+%cd /content
+!unzip /content/drive/MyDrive/BotTienLen/TienLen.zip
+%cd /content/TienLen
+
+!cp -p /content/drive/MyDrive/BotTienLen/Backup/* /content/TienLen/tmp/ppo
+!cp -p /content/drive/MyDrive/BotTienLen/Backup/info_each_game.txt /content/TienLen/Dump
+
+!python mainToTrain.py
+!cp -p /content/TienLen/tmp/ppo/* /content/drive/MyDrive/BotTienLen/Backup/
+!cp -p /content/TienLen/Dump/info_each_game.txt /content/drive/MyDrive/BotTienLen/Backup/
+
+!cp -p /content/TienLen/tmp/ppo/* /content/drive/MyDrive/BotTienLen/Backup/
+!cp -p /content/TienLen/Dump/info_each_game.txt /content/drive/MyDrive/BotTienLen/Backup/

@@ -74,6 +74,8 @@ class TienLenGame(Env):
         self.listPlayer.append(Player(index= 2, idCards=cardsForPlayer[2], currentPlayed=[]))
         self.listPlayer.append(Player(index= 3, idCards=cardsForPlayer[3], currentPlayed=[]))
 
+        # print(self.listPlayer[0].idCards)
+
         if(self.checkFastWin()):
             self.lastWinner = -1
             return self.reset()
@@ -105,7 +107,7 @@ class TienLenGame(Env):
         return False
 
     def resetRound(self):
-        print("reset round")
+        # print("reset round")
         self.indexStartRound = self.indexCurrentPlayer
         self.round += 1
         for player in self.listPlayer:
@@ -137,7 +139,7 @@ class TienLenGame(Env):
         self.action_space = np.array(self.convertAvailableActions(self.getActionUseful()), np.int)
 
     def updateGame(self, action):
-        print(self.actions[action])
+        # print(self.actions[action])
         self.notMatchCard = False
         typePrevHand = self.func.getTypeArrCard(self.lastGroup)
         typeCurrHand = self.func.TYPE_NONE
@@ -178,12 +180,12 @@ class TienLenGame(Env):
             for id in arrCard:
                 strCard += self.func.printCard(id) + ", "
         if(self.notMatchCard):
-            print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
+            # print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
             self.countActionFail += 1
             self.notMatchCard = False
             # input()
             return
-        print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
+        # print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
         # input()
         self.isGetIndex = False
         self.isMustPlayThreeSpider = False
@@ -283,6 +285,8 @@ class TienLenGame(Env):
             info = {}
             info['numTurns'] = self.round
             info['rewards'] = self.rewards
+            info['count_action_fail'] = self.countActionFail
+            info['count_has_card_not_discard'] = self.countHasCardNotDiscard
             #what else is worth monitoring?            
             # self.reset()
         return np.array(self.inputNetwork[self.indexCurrentPlayer]), reward, done, info
@@ -328,12 +332,12 @@ def worker(remote, parent_remote):
     while True:
         cmd, data = remote.recv()
         if cmd == 'step':
-            reward, done, info = game.step(data)
-            remote.send((reward, done, info))
+            observation_, reward, done, info = game.step(data)
+            remote.send((observation_,reward, done, info))
         elif cmd == 'reset':
             game.reset()
             pGo, cState, availAcs = game.getCurrentState()
-            remote.send((pGo,cState))
+            remote.send((pGo,cState,availAcs))
         elif cmd == 'getCurrState':
             pGo, cState, availAcs = game.getCurrentState()
             remote.send((pGo, cState, availAcs))
@@ -367,8 +371,8 @@ class vectorizedTienLenGame(object):
     def step_wait(self):
         results = [remote.recv() for remote in self.remotes]
         self.waiting = False
-        rewards, dones, infos = zip(*results)
-        return rewards, dones, infos
+        observation_, rewards, dones, infos = zip(*results)
+        return observation_, rewards, dones, infos
     
     def step(self, actions):
         self.step_async(actions)
@@ -388,6 +392,21 @@ class vectorizedTienLenGame(object):
     def getCurrStates(self):
         self.currStates_async()
         return self.currStates_wait()
+
+    def resetgame_async(self):
+        for remote in self.remotes:
+            remote.send(('reset', None))
+        self.waiting = True
+        
+    def resetgame_wait(self):
+        results = [remote.recv() for remote in self.remotes]
+        self.waiting = False
+        pGos, currStates, currAvailAcs = zip(*results)
+        return np.stack(pGos), np.stack(currStates), np.stack(currAvailAcs)
+    
+    def reset(self):
+        self.resetgame_async()
+        return self.resetgame_wait()
     
     def close(self):
         if self.closed:
