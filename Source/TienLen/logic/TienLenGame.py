@@ -1,6 +1,3 @@
-from operator import le
-from numpy.core.defchararray import array, count
-from numpy.lib.function_base import select
 from vo.Card import Card
 from vo.Player import Player
 import logic.FunctionCreaateInput as fci
@@ -210,6 +207,8 @@ class TienLenGame(Env):
     #Hien tai chi cong khi dc an bo do
     def calRewardStep(self, typePreHand, typeActionHand):
         rew = 0
+        if(typeActionHand < 0 or self.notMatchCard):
+            return rew
         if(typePreHand == self.func.TYPE_ONE_2_BLACK):
             rew = cons.MARK_FOR_ONE_CARD_TWO_BLACK
         elif (typePreHand == self.func.TYPE_ONE_2_RED):
