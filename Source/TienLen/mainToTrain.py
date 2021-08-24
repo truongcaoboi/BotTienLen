@@ -163,8 +163,8 @@ if __name__ == "__main__":
     except RuntimeError:
         pass
     start = time.time()
-    sim = Simulation(2, 20)
-    sim.train(100)
+    sim = Simulation(4, 20)
+    sim.train(1000)
     end = time.time()
     print("END with {} seconds".format(end - start))
 
