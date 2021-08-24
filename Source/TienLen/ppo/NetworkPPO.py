@@ -43,7 +43,7 @@ class PPOMemory:
         if(done):
             self.rewards.append([index, 0])
             self.dones.append(done)
-            self.end_game = True
+            # self.end_game = True
             last_index_player = [-1,-1,-1,-1]
             for i in range(len(self.rewards)):
                 last_index_player[self.rewards[i][0]] = i
@@ -93,8 +93,23 @@ class PPOMemory:
             self.rewards = rewards
             self.dones = dones
             self.actionsAvailables = actionsAvailables
-            
 
+
+class MultiPPOMemory:
+    def __init__(self, batch_size, n_game):
+        self.n_game = n_game
+        self.memories = []
+        for i in range(n_game):
+            mem = PPOMemory(batch_size=batch_size)
+            self.memories.append(mem)
+    
+    def store_memorys(self, states, actions, probss, valss, rewards, dones, actionAvailables,indexs):
+        for i in range(self.n_game):
+            self.memories[i].store_memory(states[i], actions[i], probss[i], valss[i], rewards[i], dones[i], actionAvailables[i],indexs[i])
+    
+    def clear_memorys(self):
+        for i in range(self.n_game):
+            self.memories[i].clear_memory()
 
 class ActionNetwork(nn.Module):
     def __init__(self, n_actions, input_dims, alpha, fc1_dims = 512, fc2_dims = 256, chkpt_dir = "tmp/ppo"):
@@ -294,7 +309,7 @@ class Agent:
                     critic_loss = (returns - critic_value) ** 2
                     critic_loss = critic_loss.mean()
                     total_loss = actor_loss + 0.5 * critic_loss - 0.01 * dist_entropy
-                    print("total_loss: {}".format(total_loss))
+                    # print("total_loss: {}".format(total_loss))
                     self.actor.optimizer.zero_grad()
                     self.critic.optimizer.zero_grad()
                     total_loss.mean().backward()

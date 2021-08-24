@@ -1,26 +1,30 @@
-from os import remove
 import numpy as np
-from numpy.lib.function_base import select
 from ppo.NetworkPPO import Agent, PPOMemory
 from logic.TienLenGame import TienLenGame
 from utils.Util import Util
 import json
-from multiprocessing import Process, Pipe
+from torch.multiprocessing import Process, Pipe, set_start_method, Pool
 import time
+from logic.ActionSpace import ActionSpace
+
+action_space_n = 8192
+input_dim = (746,)
+actionspaces = ActionSpace().actions
+
+ut = Util()
+batch_size = 512
+alpha = 0.00025
+n_epochs = 4
+agent = Agent(n_actions=action_space_n,
+                    batch_size=batch_size,
+                    alpha=alpha,
+                    n_epochs=n_epochs,
+                    input_dims= input_dim)
 
 def run(env):
-    ut = Util()
-    batch_size = 512
-    alpha = 0.00025
-    n_epochs = 4
-    agent = Agent(n_actions=env.action_space.n,
-                     batch_size=batch_size,
-                      alpha=alpha,
-                       n_epochs=n_epochs,
-                        input_dims= env.observation_space.shape)
+    env.reset()
     agent.load_models()
     memory = PPOMemory(agent.batch_size)
-
     mark_player = np.zeros((4))
     index, observation, actionAva = env.getCurrentState()
     done = False
@@ -78,7 +82,7 @@ class VectorTrain(object):
         self.closed = False
         self.envs = []
         for i in range(nGames):
-            env = TienLenGame()
+            env = TienLenGame(actionspaces)
             env.reset()
             self.envs.append(env)
         self.remotes, self.work_remotes = zip(*[Pipe() for _ in range(nGames)])
@@ -110,10 +114,7 @@ class Simulation:
         self.n_epochs = n_epochs
         self.batch_size = batch_size
         self.n_process = n_process
-        self.env = TienLenGame()
-        self.agent = Agent(input_dims=self.env.observation_space.shape,
-            n_actions= self.env.action_space.n, alpha= alpha, batch_size=batch_size,
-            n_epochs=n_epochs, memory=None)
+        self.agent = agent
         self.vector_train = VectorTrain(self.n_process)
     
     def train(self,n_game):
@@ -126,8 +127,14 @@ class Simulation:
                 self.agent.save_models()
 
 
-start = time.time()
-sim = Simulation(n_process=4)
-sim.train(100)
-end = time.time()
-print("END with {} seconds".format(end - start))
+if __name__ == '__main__': 
+    try:
+        set_start_method('spawn')
+    except RuntimeError:
+        pass
+    print("start123")
+    start = time.time()
+    sim = Simulation(n_process=4)
+    sim.train(100)
+    end = time.time()
+    print("END with {} seconds".format(end - start))

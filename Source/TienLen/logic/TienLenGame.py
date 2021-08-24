@@ -1,7 +1,6 @@
 from operator import le
 from numpy.core.defchararray import array, count
 from numpy.lib.function_base import select
-from logic.ActionSpace import ActionSpace
 from vo.Card import Card
 from vo.Player import Player
 import logic.FunctionCreaateInput as fci
@@ -42,16 +41,8 @@ class TienLenGame(Env):
     notMatchCard = False
 
 
-    def __init__(self,):
-        actionObject = ActionSpace()
-        self.actions = actionObject.actions
-        self.low = np.zeros(746)
-        self.high = np.ones(746)
-        size_action_spaces = len(self.actions)
-        self.action_space = spaces.Discrete(size_action_spaces)
-        self.observation_space = spaces.Box(
-            self.low, self.high, dtype= np.int
-        )
+    def __init__(self, action):
+        self.actions = action
         # self.reset()
     def convertAvailableActions(self,availAcs):
         #convert from (1,0,0,1,1...) to (0, -math.inf, -math.inf, 0,0...) etc
@@ -136,7 +127,6 @@ class TienLenGame(Env):
                 break
         if(self.numPlayerFold == 3):
             self.resetRound()
-        self.action_space = np.array(self.convertAvailableActions(self.getActionUseful()), np.int)
 
     def updateGame(self, action):
         # print(self.actions[action])
@@ -288,14 +278,14 @@ class TienLenGame(Env):
             info['count_action_fail'] = self.countActionFail
             info['count_has_card_not_discard'] = self.countHasCardNotDiscard
             #what else is worth monitoring?            
-            # self.reset()
+            self.reset()
         return np.array(self.inputNetwork[self.indexCurrentPlayer]), reward, done, info
 
 
     def updateInputNetwork(self):
         self.inputNetwork = []
         for player in self.listPlayer:
-            arrInput = fci.createInput(self.listPlayer, player.index, np.array([]), self.isMustPlayThreeSpider)
+            arrInput = fci.createInput(self.listPlayer, player.index, np.array(self.lastGroup), self.isMustPlayThreeSpider)
             self.inputNetwork.append(arrInput)
             self.countBitInput = len(arrInput)
         self.inputNetwork = np.array(self.inputNetwork)
@@ -326,97 +316,4 @@ class TienLenGame(Env):
         return self.indexCurrentPlayer, self.inputNetwork[self.indexCurrentPlayer], actionAva
     
 #now create a vectorized environment
-def worker(remote, parent_remote):
-    parent_remote.close()
-    game = TienLenGame()
-    while True:
-        cmd, data = remote.recv()
-        if cmd == 'step':
-            observation_, reward, done, info = game.step(data)
-            remote.send((observation_,reward, done, info))
-        elif cmd == 'reset':
-            game.reset()
-            pGo, cState, availAcs = game.getCurrentState()
-            remote.send((pGo,cState,availAcs))
-        elif cmd == 'getCurrState':
-            pGo, cState, availAcs = game.getCurrentState()
-            remote.send((pGo, cState, availAcs))
-        elif cmd == 'close':
-            remote.close()
-            break
-        else:
-            print("Invalid command sent by remote")
-            break
-        
-
-class vectorizedTienLenGame(object):
-    def __init__(self, nGames):
-        
-        self.waiting = False
-        self.closed = False
-        self.remotes, self.work_remotes = zip(*[Pipe() for _ in range(nGames)])
-        self.ps = [Process(target=worker, args=(work_remote, remote)) for (work_remote, remote) in zip(self.work_remotes, self.remotes)]
-        
-        for p in self.ps:
-            p.daemon = True
-            p.start()
-        for remote in self.work_remotes:
-            remote.close()
-            
-    def step_async(self, actions):
-        for remote, action in zip(self.remotes, actions):
-            remote.send(('step', action))
-        self.waiting = True
-        
-    def step_wait(self):
-        results = [remote.recv() for remote in self.remotes]
-        self.waiting = False
-        observation_, rewards, dones, infos = zip(*results)
-        return observation_, rewards, dones, infos
-    
-    def step(self, actions):
-        self.step_async(actions)
-        return self.step_wait()
-        
-    def currStates_async(self):
-        for remote in self.remotes:
-            remote.send(('getCurrState', None))
-        self.waiting = True
-        
-    def currStates_wait(self):
-        results = [remote.recv() for remote in self.remotes]
-        self.waiting = False
-        pGos, currStates, currAvailAcs = zip(*results)
-        return np.stack(pGos), np.stack(currStates), np.stack(currAvailAcs)
-    
-    def getCurrStates(self):
-        self.currStates_async()
-        return self.currStates_wait()
-
-    def resetgame_async(self):
-        for remote in self.remotes:
-            remote.send(('reset', None))
-        self.waiting = True
-        
-    def resetgame_wait(self):
-        results = [remote.recv() for remote in self.remotes]
-        self.waiting = False
-        pGos, currStates, currAvailAcs = zip(*results)
-        return np.stack(pGos), np.stack(currStates), np.stack(currAvailAcs)
-    
-    def reset(self):
-        self.resetgame_async()
-        return self.resetgame_wait()
-    
-    def close(self):
-        if self.closed:
-            return
-        if self.waiting:
-            for remote in self.remotes:
-                remote.recv()
-        for remote in self.remotes:
-            remote.send(('close', None))
-        for p in self.ps:
-            p.join()
-        self.closed = True
 
