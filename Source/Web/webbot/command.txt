@@ -1,0 +1,12 @@
+docker build --tag <name-imange> .
+docker run --publish <port>:<port> <name-image>
+
+docker ps: liet ke cac container dang chay
+docker pull <name-image>: tai mot image co san tren docker-hub
+docker build -t <name-image>: build image
+docker run <name-image> -it bash: su dung -it bash neu can chay bash tu container nay
+docker logs --follow <name-container>: theo doi log cua container
+docker volumn ls: liet ke cac volumn docker dang su dung
+docker rm <list container or id container>
+docker rmi <list images id>
+docker stop <list id container>

@@ -1,0 +1,15 @@
+FROM python:3.7.11-slim-buster
+
+WORKDIR /app
+
+COPY requirement.txt requirement.txt
+
+RUN python3 -m venv venvwebbot
+RUN chmod +x ./venvwebbot/bin/activate
+RUN ./venvwebbot/bin/activate
+RUN pip3 install --user torch==1.5.1+cu101 torchvision==0.6.1+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip3 install --user -r requirement.txt
+
+COPY . .
+
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8080"]Ls
