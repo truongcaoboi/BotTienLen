@@ -25,7 +25,7 @@ SECRET_KEY = 'vj4mq)23qra+r94t^xo+u@5&xbr)eso)zx7cop@t)ngk+v5*n7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['34.126.176.239', 'localhost']
 
 
 # Application definition
@@ -56,6 +56,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8080',
+    'http://34.126.176.239:8080',
 )
 
 ROOT_URLCONF = 'webbot.urls'
