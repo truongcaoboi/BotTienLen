@@ -1,0 +1,2 @@
+{"mark_player": [-11.0, -10.0, -9.0, 130.0], "count_action_fail": 0, "count_has_card_not_discard": 10}
+{"mark_player": [0.0, -4.0, -4.0, 111.0], "count_action_fail": 0, "count_has_card_not_discard": 9}
