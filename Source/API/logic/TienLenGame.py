@@ -1,5 +1,4 @@
 import numpy as np
-from rest_framework.decorators import action
 from .Player import Player
 from .ActionSpace import ActionSpace
 from .Function import Function
