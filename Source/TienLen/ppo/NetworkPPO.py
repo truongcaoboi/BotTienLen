@@ -154,7 +154,7 @@ class ActionNetwork(nn.Module):
         T.save(self.state_dict() , self.checkpoint_file)
 
     def load_checkpoint(self):
-        self.load_state_dict(T.load(self.checkpoint_file))
+        self.load_state_dict(T.load(self.checkpoint_file, map_location={'cuda:0': 'cpu'}))
 
 class CriticNetwork(nn.Module):
     def __init__(self, input_dims, n_actions, alpha, fc1_dims = 512, fc2_dim2 = 256, chkpt_dir = "tmp/ppo"):
@@ -187,7 +187,7 @@ class CriticNetwork(nn.Module):
         T.save(self.state_dict() , self.checkpoint_file)
 
     def load_checkpoint(self):
-        self.load_state_dict(T.load(self.checkpoint_file))
+        self.load_state_dict(T.load(self.checkpoint_file, map_location={'cuda:0': 'cpu'}))
 
 class Agent:
     def __init__(self,input_dims, n_actions, gamma = 0.99, alpha = 0.0003, gae_lambda = 0.95,
@@ -217,12 +217,12 @@ class Agent:
         self.critic.save_checkpoint()
 
     def load_models(self):
-        try:
+        # try:
             print("... load models ...")
             self.actor.load_checkpoint()
             self.critic.load_checkpoint()
-        except Exception:
-            print(Exception)
+        # except Exception:
+        #     print(Exception)
 
     def choose_action(self, observation, actionAva):
         state = T.tensor([observation], dtype=T.float32).to(self.actor.device)
