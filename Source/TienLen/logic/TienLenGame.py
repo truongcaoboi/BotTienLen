@@ -38,8 +38,9 @@ class TienLenGame(Env):
     notMatchCard = False
 
 
-    def __init__(self, action):
+    def __init__(self, action, actions_new):
         self.actions = action
+        self.actions_new = actions_new
         # self.reset()
     def convertAvailableActions(self,availAcs):
         #convert from (1,0,0,1,1...) to (0, -math.inf, -math.inf, 0,0...) etc
@@ -309,6 +310,31 @@ class TienLenGame(Env):
                         countAction += 1
         self.listPlayer[self.indexCurrentPlayer].numberActionAvailable = countAction
         return np.array(actionavailable, np.float)
+
+    def getActionUsefulCustom(self):
+        countAction = 0
+        cards = self.func.sortCard(self.listPlayer[self.indexCurrentPlayer].idCards)
+        actionavailable = np.zeros((len(self.actions)))
+        if(len(self.lastGroup) == 0):
+            for i in range(len(self.actions)):
+                arrCard = self.func.convertActionToArrCard(self.actions[i], cards)
+                if arrCard is not None:
+                    if(self.func.acceptDiscards(arrCard, self.isMustPlayThreeSpider)):
+                        actionavailable[i] = 1
+                        countAction += 1
+        else:
+            actionavailable[0] = 1
+            obj = self.actions_new[len(self.lastGroup)]
+            array_check = obj["array"]
+            for i in range(len(array_check)):
+                arrCard = self.func.convertActionToArrCard(array_check[i],cards)
+                if arrCard is not None:
+                    if(self.func.compareTwoArrayCard(self.lastGroup, arrCard)):
+                        actionavailable[obj["index"]+i] = 1
+                        countAction += 1
+        self.listPlayer[self.indexCurrentPlayer].numberActionAvailable = countAction
+        return np.array(actionavailable, np.float)
+
 
     def getCurrentState(self):
         actionAva = self.convertAvailableActions(self.getActionUseful())

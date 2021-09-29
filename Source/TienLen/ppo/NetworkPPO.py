@@ -1,4 +1,4 @@
-import math
+import math, time
 import os
 import numpy as np
 import torch as T
@@ -127,9 +127,10 @@ class ActionNetwork(nn.Module):
         )
         self.action_dims = n_actions
         self.optimizer = optim.Adam(self.parameters(), lr= alpha)
-        self.device = T.device('cpu')
-        if T.cuda.is_available():
-            self.device = T.device('cuda:0') 
+        # self.device = T.device('cpu')
+        # if T.cuda.is_available():
+        #     self.device = T.device('cuda:0') 
+        self.device =T.device("cuda:0" if T.cuda.is_available() else "cpu")
         self.to(self.device)
 
     def set_action_var(self, action_new):
@@ -140,7 +141,11 @@ class ActionNetwork(nn.Module):
         # dist = Categorical(dist)
         # return dist
         self.set_action_var(actionAva)
+        start = time.time()
         action_mean = self.actor(state)
+        end = time.time()
+        print("cal action_mean {}".format(end - start))
+        start = time.time()
         if(is_get_action == True):
             cov_mat = T.diag(self.action_var).unsqueeze(dim=0)
             dist = MultivariateNormal(action_mean, covariance_matrix=cov_mat)
@@ -148,6 +153,8 @@ class ActionNetwork(nn.Module):
             action_var = self.action_var.expand_as(action_mean)
             cov_mat = T.diag_embed(action_var).to(self.device)
             dist = MultivariateNormal(action_mean, covariance_matrix=cov_mat)
+        end = time.time()
+        print("cal dist {}".format(end - start))
         return dist
 
     def save_checkpoint(self):
@@ -171,9 +178,10 @@ class CriticNetwork(nn.Module):
         )
         self.action_dims = n_actions
         self.optimizer = optim.Adam(self.parameters(), lr= alpha)
-        self.device = T.device('cpu')
-        if T.cuda.is_available():
-            self.device = T.device('cuda:0')
+        # self.device = T.device('cpu')
+        # if T.cuda.is_available():
+        #     self.device = T.device('cuda:0')
+        self.device = T.device("cuda:0" if T.cuda.is_available() else "cpu")
         self.to(self.device)
 
     def set_action_var(self, action_new):
@@ -199,7 +207,9 @@ class Agent:
         self.n_epochs = n_epochs
 
         self.actor = ActionNetwork(n_actions= n_actions, input_dims= input_dims, alpha = alpha)
+        self.actor.to(device=self.actor.device)
         self.critic = CriticNetwork(input_dims=input_dims, n_actions=n_actions, alpha= alpha)
+        self.critic.to(device=self.critic.device)
         # self.memory = PPOMemory(batch_size)
         self.memory = memory
         self.batch_size = batch_size
@@ -226,7 +236,10 @@ class Agent:
 
     def choose_action(self, observation, actionAva):
         state = T.tensor([observation], dtype=T.float32).to(self.actor.device)
+        start = time.time()
         dist = self.actor(state, actionAva, True)
+        end = time.time()
+        print("forward {} ".format(end - start))
         value = self.critic(state)
         action = dist.sample()
         probs = T.squeeze(dist.log_prob(action)).item()
@@ -313,8 +326,10 @@ class Agent:
                     self.actor.optimizer.zero_grad()
                     self.critic.optimizer.zero_grad()
                     total_loss.mean().backward()
-                    T.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=0.5, error_if_nonfinite=False)
-                    T.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5, error_if_nonfinite=False)
+                    # T.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=0.5, error_if_nonfinite=False)
+                    # T.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5, error_if_nonfinite=False)
+                    T.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=0.5)
+                    T.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5)
                     self.actor.optimizer.step()
                     self.critic.optimizer.step()
 

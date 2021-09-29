@@ -1,3 +1,4 @@
+from os import stat
 from tokenize import endpats
 import numpy as np
 from ppo.NetworkPPO import Agent, MultiPPOMemory
@@ -6,8 +7,14 @@ from utils.Util import Util
 import json
 from logic.ActionSpace import ActionSpace
 from torch.multiprocessing import Process, Pipe, set_start_method, Pool
-import time
+import time, math
+import torch as T
 
+
+print(T.cuda.device_count())
+
+
+file_log = open("log.txt", "w+")
 
 def worker(remote, parent_remote, env):
     parent_remote.close()
@@ -93,8 +100,9 @@ class vectorizedTienLenGame(object):
             p.join()
         self.closed = True
 
+
 class Simulation:
-    def __init__(self, n_game, n_step, batch_size=512, alpha= 0.00025, n_epochs=4) -> None:
+    def __init__(self, n_game, n_step, batch_size=32, alpha= 0.00025, n_epochs=4) -> None:
         self.batch_size = batch_size
         self.action_spaces = ActionSpace().actions
         self.ut = Util()
@@ -144,18 +152,28 @@ class Simulation:
                     mark_player = np.zeros((4))
                     self.mark_players[idgame] = mark_player
                     print("finish game")
+                    file_log.write("finish game!")
+                    file_log.flush()
                 else:
                     mark_player[index] += reward
                     
 
     def train(self, n_train):
         n_update = n_train // (self.n_game * self.n_step)
+        start = time.time()
         for _ in range(n_update):
             self.run()
             for mem in self.multi_memory.memories:
                 self.agent.set_memory(mem)
                 self.agent.learn()
                 self.agent.save_models()
+            if( _ % 100 == 0):
+                strPrint = "Finish train times: {} in {} seconds\n".format(math.floor( _ /100),(time.time() - start))
+                print(strPrint)
+                file_log.write(strPrint)
+                file_log.flush()
+
+
 
 if __name__ == "__main__":
     try:
@@ -163,8 +181,12 @@ if __name__ == "__main__":
     except RuntimeError:
         pass
     start = time.time()
-    sim = Simulation(2, 20)
-    sim.train(1000)
+    sim = Simulation(8, 20)
+    sim.train(10000000)
     end = time.time()
     print("END with {} seconds".format(end - start))
+    file_log.write("END with {} seconds".format(end - start))
+    file_log.flush()
+    
+file_log.close()
 

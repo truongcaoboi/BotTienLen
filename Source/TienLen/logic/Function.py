@@ -41,10 +41,17 @@ class Function:
         arrCardBin = self.convertCardOnHandToBinary13(arrCardOnHand)
         checkArrAction = int(self.util.convert_array_toString(arrayAction), base= 2)
         checkCardOnHand = int(self.util.convert_array_toString(arrCardBin), base= 2)
+
+        # count = 0
+        # for bin in arrayAction:
+        #     if bin == 1:
+        #         count+=1
+        
         # print(arrayAction)
         # print(arrCardBin)
         # print("===================")
         return checkArrAction == checkArrAction & checkCardOnHand
+        # return count <= len(arrCardOnHand)
     
     # input: cardId
     # output: number of card
