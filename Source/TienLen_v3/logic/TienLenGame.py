@@ -9,9 +9,9 @@ import numpy as np
 import random, time
 import math
 from multiprocessing import Process, Pipe
-from gym import spaces, Env
+# from gym import spaces, Env
 
-class TienLenGame(Env):
+class TienLenGame:
     num_envs = 4
     actions = []
     indexCurrentPlayer = 0
@@ -38,6 +38,8 @@ class TienLenGame(Env):
     historyNotDisCardInRound = []
     notMatchCard = False
 
+    total_reward = 0
+    reward_items = [0,0,0,0]
 
     def __init__(self, action, actions_new):
         self.actions = action
@@ -50,6 +52,8 @@ class TienLenGame(Env):
         return availAcs
     def reset(self):
         print("reset game")
+        self.total_reward = 0
+        self.reward_items = [0,0,0,0]
         self.isMustPlayThreeSpider = False
         self.historyNotDiscard = []
         self.desk = np.random.permutation(52) + 1
@@ -152,6 +156,7 @@ class TienLenGame(Env):
                     player.currentPlayed = playerDiscard
                     if(len(player.idCards) == 0):
                         self.gameOver = True
+                        self.lastWinner = self.indexCurrentPlayer
                     self.lastGroup = arrCard
                 else:
                     if(len(arrCard) == 0 and player.numberActionAvailable > 1):
@@ -169,12 +174,12 @@ class TienLenGame(Env):
             for id in arrCard:
                 strCard += self.func.printCard(id) + ", "
         if(self.notMatchCard):
-            # print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
+            print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
             self.countActionFail += 1
             self.notMatchCard = False
             # input()
             return
-        # print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
+        print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
         # input()
         self.isGetIndex = False
         self.isMustPlayThreeSpider = False
@@ -193,6 +198,7 @@ class TienLenGame(Env):
         self.rewards = np.zeros((len(self.listPlayer)))
         self.rewardStep = self.calRewardStep(typePrevHand, typeActionHand)
         winnerMark = 0
+        self.total_reward += self.rewardStep
         if(self.gameOver):
             for index in range(len(self.listPlayer)):
                 if(index != self.lastWinner):
@@ -204,6 +210,9 @@ class TienLenGame(Env):
             indexPayForAll = self.getPayForAllPlayer()
             if(indexPayForAll >= 0):
                 self.rewards[indexPayForAll] = (-1) * winnerMark
+            self.reward_items += self.rewards
+        else:
+            self.reward_items[self.indexCurrentPlayer] += self.rewardStep
 
     #Con cap nhat them
     #Hien tai chi cong khi dc an bo do
@@ -276,8 +285,12 @@ class TienLenGame(Env):
             info = {}
             info['numTurns'] = self.round
             info['rewards'] = self.rewards
-            info['count_action_fail'] = self.countActionFail
-            info['count_has_card_not_discard'] = self.countHasCardNotDiscard
+            info["infoGame"] = {
+                "playerWin": self.lastWinner,
+                "total_score": self.total_reward,
+                "rewards": self.reward_items
+            }
+
             #what else is worth monitoring?            
             self.reset()
         # return np.array(self.inputNetwork[self.indexCurrentPlayer]), reward, done, info
@@ -346,9 +359,10 @@ class TienLenGame(Env):
     
 
 #now create a vectorized environment
-def worker(remote, parent_remote, actions, actions_new):
+def worker(remote, parent_remote, env):
     parent_remote.close()
-    game = TienLenGame(action=actions,actions_new=actions_new)
+    game = env
+    game.reset()
     while True:
         cmd, data = remote.recv()
         if cmd == 'step':
@@ -374,11 +388,12 @@ class vectorizedTienLenGame(object):
         self.action_object = ActionSpace()
         self.waiting = False
         self.closed = False
+        self.games = []
+        for _ in range(nGames):
+            self.games.append(TienLenGame(self.action_object.actions, self.action_object.actions_new))
         self.remotes, self.work_remotes = zip(*[Pipe() for _ in range(nGames)])
-        self.ps = [Process(target=worker, args=(work_remote, remote)) \
-            for (work_remote, remote, \
-                self.action_object.actions, self.action_object.actions_new) \
-                    in zip(self.work_remotes, self.remotes)]
+        self.ps = [Process(target=worker, args=(work_remote, remote, env)) for (work_remote, remote, env) \
+                    in zip(self.work_remotes, self.remotes, self.games)]
         
         for p in self.ps:
             p.daemon = True
