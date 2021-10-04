@@ -174,12 +174,12 @@ class TienLenGame:
             for id in arrCard:
                 strCard += self.func.printCard(id) + ", "
         if(self.notMatchCard):
-            print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
+            # print("player {} chon sai action r - arrCard: {}".format(self.indexCurrentPlayer, strCard))
             self.countActionFail += 1
             self.notMatchCard = False
             # input()
             return
-        print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
+        # print("player {} Chon dung action roi nhe! - {}".format(self.indexCurrentPlayer, strCard))
         # input()
         self.isGetIndex = False
         self.isMustPlayThreeSpider = False
@@ -390,7 +390,8 @@ class vectorizedTienLenGame(object):
         self.closed = False
         self.games = []
         for _ in range(nGames):
-            self.games.append(TienLenGame(self.action_object.actions, self.action_object.actions_new))
+            env = TienLenGame(self.action_object.actions, self.action_object.actions_new)
+            self.games.append(env)
         self.remotes, self.work_remotes = zip(*[Pipe() for _ in range(nGames)])
         self.ps = [Process(target=worker, args=(work_remote, remote, env)) for (work_remote, remote, env) \
                     in zip(self.work_remotes, self.remotes, self.games)]

@@ -74,3 +74,158 @@ On turn train 2 Game 0 Finish with round 11 has infogame {'playerWin': 2, 'total
 On turn train 2 Game 1 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2., -10., 148., -36.])}
 Train 1. Run 80 steps and update models in 14.16566252708435 seconds
 Total time 28.20091938972473 seconds
+Train 0. Run 80 steps and update models in 10.8223717212677 seconds
+On turn train 2 Game 1 Finish with round 8 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -7., 117.,  -9.,  -1.])}
+On turn train 2 Game 0 Finish with round 9 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -2., 105.,  -2.,  -1.])}
+Train 1. Run 80 steps and update models in 13.359778881072998 seconds
+Total time 25.15114140510559 seconds
+Train 0. Run 40 steps and update models in 5.936796188354492 seconds
+Train 1. Run 40 steps and update models in 3.717031955718994 seconds
+On turn train 3 Game 1 Finish with round 8 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -8.,  -6.,  -5., 119.])}
+On turn train 3 Game 0 Finish with round 11 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -2.,  -3.,  -1., 106.])}
+Train 2. Run 40 steps and update models in 6.069178342819214 seconds
+Total time 16.300840139389038 seconds
+On turn train 1 Game 0 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -7.,  -3., 123., -13.])}
+On turn train 1 Game 3 Finish with round 7 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([125.,  -3., -14.,  -8.])}
+On turn train 1 Game 1 Finish with round 8 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-10.,  -3., 120.,  -7.])}
+On turn train 1 Game 2 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -1., 111.,  -9.])}
+On turn train 1 Game 3 Finish with round 8 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([112.,  -4.,  -5.,  -3.])}
+On turn train 1 Game 0 Finish with round 14 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([104.,  -1.,  -2.,  -1.])}
+On turn train 1 Game 1 Finish with round 13 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -4.,  -1.,  -3., 108.])}
+On turn train 1 Game 2 Finish with round 12 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -3.,  -3., 109.])}
+On turn train 1 Game 0 Finish with round 9 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([118.,  -2.,  -6., -10.])}
+On turn train 1 Game 3 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -2., 106.,  -3.])}
+On turn train 1 Game 1 Finish with round 10 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-13., 133., -17.,  -3.])}
+On turn train 1 Game 2 Finish with round 12 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([110.,  -2.,  -3.,  -5.])}
+On turn train 1 Game 3 Finish with round 9 has infogame {'playerWin': 2, 'total_score': 15, 'rewards': array([ -2.,  -6., 130.,  -7.])}
+On turn train 1 Game 1 Finish with round 8 has infogame {'playerWin': 0, 'total_score': 15, 'rewards': array([115.,  -6.,  13.,  -7.])}
+Train 0. Run 800 steps and update models in 102.55284667015076 seconds
+On turn train 1 Game 0 Finish with round 9 has infogame {'playerWin': 0, 'total_score': 15, 'rewards': array([111.,  13.,  -6.,  -3.])}
+On turn train 1 Game 3 Finish with round 9 has infogame {'playerWin': 1, 'total_score': 15, 'rewards': array([ -2., 125.,  -4.,  -4.])}
+On turn train 1 Game 1 Finish with round 11 has infogame {'playerWin': 0, 'total_score': 15, 'rewards': array([110.,  13.,  -5.,  -3.])}
+On turn train 1 Game 2 Finish with round 10 has infogame {'playerWin': 1, 'total_score': 15, 'rewards': array([ -1., 120.,  -2.,  -2.])}
+On turn train 1 Game 3 Finish with round 8 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([-16.,  -7.,  -9., 132.])}
+On turn train 1 Game 1 Finish with round 11 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-10., 116.,  -5.,  -1.])}
+On turn train 1 Game 2 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-10.,  -7., 118.,  -1.])}
+On turn train 1 Game 0 Finish with round 14 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([109.,  -7.,  -1.,  -1.])}
+On turn train 1 Game 1 Finish with round 8 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -4.,  -3., -13., 120.])}
+On turn train 1 Game 2 Finish with round 9 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -5., 112.,  -5.,  -2.])}
+On turn train 1 Game 3 Finish with round 18 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -1., 103.,  -1.])}
+On turn train 1 Game 0 Finish with round 12 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([112.,  -1.,  -9.,  -2.])}
+On turn train 1 Game 2 Finish with round 9 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([120.,  -2.,  -4., -14.])}
+Train 0. Run 800 steps and update models in 80.27434992790222 seconds
+On turn train 2 Game 1 Finish with round 10 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -7.,  -4.,  -1., 112.])}
+On turn train 2 Game 3 Finish with round 9 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([111.,  -1.,  -4.,  -6.])}
+On turn train 2 Game 0 Finish with round 12 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1., -14.,  -3., 118.])}
+On turn train 2 Game 2 Finish with round 10 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([-14.,  -6.,  -3., 123.])}
+On turn train 2 Game 1 Finish with round 11 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -5.,  -4.,  -6., 115.])}
+On turn train 2 Game 3 Finish with round 11 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -6.,  -4., 113.])}
+On turn train 2 Game 0 Finish with round 9 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([-16.,  -5.,  -3., 124.])}
+On turn train 2 Game 2 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1., -13., 117.,  -3.])}
+On turn train 2 Game 0 Finish with round 9 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-15.,  -1., 117.,  -1.])}
+On turn train 2 Game 1 Finish with round 16 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -1., 110.,  -8.,  -1.])}
+On turn train 2 Game 3 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2.,  -1., 104.,  -1.])}
+On turn train 2 Game 2 Finish with round 8 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -2., 109.,  -4.,  -3.])}
+On turn train 2 Game 0 Finish with round 7 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -3., 112.,  -6.,  -3.])}
+On turn train 2 Game 1 Finish with round 8 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -1., 108.,  -6.,  -1.])}
+On turn train 2 Game 3 Finish with round 8 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([109.,  -2.,  -4.,  -3.])}
+On turn train 2 Game 2 Finish with round 10 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-13.,  -3., 118.,  -2.])}
+Train 1. Run 800 steps and update models in 89.07240056991577 seconds
+Total time 169.9393994808197 seconds
+On turn train 1 Game 3 Finish with round 6 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([131.,  -8., -22.,  -1.])}
+On turn train 1 Game 0 Finish with round 7 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([114.,  -7.,  -6.,  -1.])}
+On turn train 1 Game 2 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -5.,  -4., 110.,  -1.])}
+On turn train 1 Game 1 Finish with round 15 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([114.,  -1., -12.,  -1.])}
+On turn train 1 Game 0 Finish with round 8 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -2.,  -7., -16., 125.])}
+On turn train 1 Game 3 Finish with round 14 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -2.,  -3.,  -3., 108.])}
+On turn train 1 Game 2 Finish with round 13 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([118.,  -2., -15.,  -1.])}
+On turn train 1 Game 0 Finish with round 13 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -4.,  -7., 112.])}
+On turn train 1 Game 1 Finish with round 15 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([112.,  -1.,  -2.,  -9.])}
+On turn train 1 Game 3 Finish with round 12 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -4.,  -1., 108.])}
+On turn train 1 Game 2 Finish with round 10 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -4.,  -3., 112.,  -5.])}
+On turn train 1 Game 0 Finish with round 8 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-17., 126.,  -2.,  -7.])}
+On turn train 1 Game 3 Finish with round 7 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-14., 122.,  -5.,  -3.])}
+On turn train 1 Game 1 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -1., 108.,  -4.])}
+Train 0. Run 800 steps and update models in 92.27803373336792 seconds
+On turn train 2 Game 2 Finish with round 9 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -3., 111.,  -5.])}
+On turn train 2 Game 0 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([125., -12., -10.,  -3.])}
+On turn train 2 Game 1 Finish with round 10 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -5.,  -2., 112.,  -5.])}
+On turn train 2 Game 3 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -1., 104.,  -2.])}
+On turn train 2 Game 2 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2.,  -1., 104.,  -1.])}
+On turn train 2 Game 0 Finish with round 12 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([115.,  -3.,  -4.,  -8.])}
+On turn train 2 Game 3 Finish with round 10 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -4., -16., 123.])}
+On turn train 2 Game 1 Finish with round 13 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([106.,  -2.,  -1.,  -3.])}
+On turn train 2 Game 2 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -3., 105.,  -1.])}
+On turn train 2 Game 0 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -4.,  -1., 106.,  -1.])}
+On turn train 2 Game 1 Finish with round 8 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -9.,  -4., -20., 133.])}
+On turn train 2 Game 0 Finish with round 5 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-17., 144.,  -9., -18.])}
+On turn train 2 Game 3 Finish with round 10 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -7., 121., -12.,  -2.])}
+On turn train 2 Game 0 Finish with round 4 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([171., -10., -36., -25.])}
+On turn train 2 Game 3 Finish with round 3 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-31., 193., -26., -93.])}
+On turn train 2 Game 3 Finish with round 4 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([169.,  -9., -36., -24.])}
+On turn train 2 Game 2 Finish with round 10 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -2., 118., -13.,  -3.])}
+On turn train 2 Game 1 Finish with round 8 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -7., -12., 124.,  -5.])}
+Train 1. Run 800 steps and update models in 102.31993174552917 seconds
+On turn train 3 Game 0 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -8.,  -4., 116.,  -4.])}
+On turn train 3 Game 3 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-13.,  -4., 121.,  -4.])}
+On turn train 3 Game 1 Finish with round 8 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -7.,  -3., 116.,  -6.])}
+On turn train 3 Game 2 Finish with round 12 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -1.,  -1., 103.])}
+On turn train 3 Game 1 Finish with round 5 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([135.,  -5.,  -5., -25.])}
+On turn train 3 Game 2 Finish with round 3 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([165.,  -9., -36., -20.])}
+On turn train 3 Game 0 Finish with round 15 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -4.,  -3., 111.,  -4.])}
+On turn train 3 Game 1 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-13.,  -4., 121.,  -4.])}
+On turn train 3 Game 3 Finish with round 14 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -4., 108.,  -1.,  -3.])}
+On turn train 3 Game 2 Finish with round 7 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -8.,  -4., 116.,  -4.])}
+On turn train 3 Game 0 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -6., 112.,  -3.])}
+On turn train 3 Game 3 Finish with round 13 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-11., 116.,  -4.,  -1.])}
+On turn train 3 Game 1 Finish with round 17 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -2.,  -1., 104.])}
+On turn train 3 Game 2 Finish with round 16 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([107.,  -3.,  -1.,  -3.])}
+On turn train 3 Game 0 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([115.,  -8.,  -3.,  -4.])}
+On turn train 3 Game 3 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([112.,  -2.,  -9.,  -1.])}
+Train 2. Run 800 steps and update models in 94.38908219337463 seconds
+Total time 290.42531514167786 seconds
+On turn train 1 Game 0 Finish with round 9 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -8.,  -3., 114.])}
+On turn train 1 Game 3 Finish with round 11 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([107.,  -2.,  -4.,  -1.])}
+On turn train 1 Game 1 Finish with round 12 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -3., 108.,  -4.,  -1.])}
+On turn train 1 Game 2 Finish with round 15 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -1., 103.,  -1.,  -1.])}
+On turn train 1 Game 0 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([109.,  -4.,  -4.,  -1.])}
+On turn train 1 Game 3 Finish with round 9 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([120., -13.,  -5.,  -2.])}
+On turn train 1 Game 1 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -4., 109.,  -2.])}
+On turn train 1 Game 2 Finish with round 11 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([111.,  -2.,  -4.,  -5.])}
+On turn train 1 Game 0 Finish with round 9 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -3., 120., -12.,  -5.])}
+On turn train 1 Game 3 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([106.,  -1.,  -2.,  -3.])}
+On turn train 1 Game 1 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -1., 105.,  -1.])}
+On turn train 1 Game 2 Finish with round 11 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -1., -14., 118.])}
+Train 0. Run 800 steps and update models in 191.1876118183136 seconds
+On turn train 2 Game 3 Finish with round 10 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([111.,  -5.,  -2.,  -4.])}
+On turn train 2 Game 0 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -1., 106.,  -4.])}
+On turn train 2 Game 1 Finish with round 8 has infogame {'playerWin': 1, 'total_score': 15, 'rewards': array([ -4., 112.,  -4.,  11.])}
+On turn train 2 Game 2 Finish with round 9 has infogame {'playerWin': 1, 'total_score': 15, 'rewards': array([ -5., 116.,  -4.,   8.])}
+On turn train 2 Game 3 Finish with round 10 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -3.,  -1.,  -3., 107.])}
+On turn train 2 Game 0 Finish with round 11 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -2., 105.,  -2.,  -1.])}
+On turn train 2 Game 2 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 15, 'rewards': array([ -2.,  -3., 111.,   9.])}
+On turn train 2 Game 1 Finish with round 15 has infogame {'playerWin': 2, 'total_score': 15, 'rewards': array([ -1.,  -1., 105.,  12.])}
+On turn train 2 Game 3 Finish with round 14 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -2.,  -4.,  -1., 107.])}
+On turn train 2 Game 0 Finish with round 12 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -8.,  -4., 113.])}
+On turn train 2 Game 2 Finish with round 13 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -4., -15., 120.])}
+On turn train 2 Game 1 Finish with round 13 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([113.,  -6.,  -4.,  -3.])}
+On turn train 2 Game 3 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -8.,  -1., 111.,  -2.])}
+On turn train 2 Game 0 Finish with round 11 has infogame {'playerWin': 0, 'total_score': 0, 'rewards': array([105.,  -2.,  -1.,  -2.])}
+On turn train 2 Game 2 Finish with round 11 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -9.,  -2., 113.,  -2.])}
+Train 1. Run 800 steps and update models in 203.12669229507446 seconds
+On turn train 3 Game 1 Finish with round 12 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -1., 105.,  -1.,  -3.])}
+On turn train 3 Game 3 Finish with round 14 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2.,  -1., 105.,  -2.])}
+On turn train 3 Game 0 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -3.,  -1., 108.,  -4.])}
+On turn train 3 Game 2 Finish with round 12 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -1., 104.,  -2.,  -1.])}
+On turn train 3 Game 1 Finish with round 13 has infogame {'playerWin': 3, 'total_score': 0, 'rewards': array([ -1.,  -2.,  -2., 105.])}
+On turn train 3 Game 2 Finish with round 8 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -4.,  -7., 118.,  -7.])}
+On turn train 3 Game 3 Finish with round 12 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -8.,  -3., 118.,  -7.])}
+On turn train 3 Game 0 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -1.,  -1., 108.,  -6.])}
+On turn train 3 Game 1 Finish with round 13 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2.,  -1., 110.,  -7.])}
+On turn train 3 Game 3 Finish with round 10 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([-15., -21., 137.,  -1.])}
+On turn train 3 Game 2 Finish with round 11 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -2., 120.,  -9.,  -9.])}
+On turn train 3 Game 0 Finish with round 11 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([ -4., 118., -10.,  -4.])}
+On turn train 3 Game 1 Finish with round 10 has infogame {'playerWin': 2, 'total_score': 0, 'rewards': array([ -2.,  -9., 112.,  -1.])}
+On turn train 3 Game 3 Finish with round 10 has infogame {'playerWin': 1, 'total_score': 0, 'rewards': array([-11., 118.,  -4.,  -3.])}
+Train 2. Run 800 steps and update models in 190.07909417152405 seconds
+Total time 585.4493203163147 seconds

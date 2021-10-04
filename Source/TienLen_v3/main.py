@@ -110,8 +110,8 @@ def train(n_game=1, n_steps=200, batch_size=10):
                     file_log.write(str_log+"\n")
                     file_log.flush()
         indexs_to_learning = np.arange(0,n_game,1,dtype=np.int)
-        # agent.update()
-        vec_to_learning.learning(indexs_to_learning)
+        agent.update()
+        # vec_to_learning.learning(indexs_to_learning)
         agent.save_model()
         agent.clear_memory()
         end = time.time()
@@ -122,7 +122,7 @@ def train(n_game=1, n_steps=200, batch_size=10):
 
 if(__name__ == "__main__"):
     start = time.time()
-    train(2, 100, 40)
+    train(4, 1600, 200)
     end = time.time()
     str_log = f"Total time {end - start} seconds"
     print(str_log)
